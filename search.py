@@ -17,6 +17,7 @@ In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
 
+from game import Directions
 import util
 
 class SearchProblem:
@@ -74,33 +75,93 @@ def tinyMazeSearch(problem):
 
 
 def depthFirstSearch(problem):
-    """
-    Search the deepest nodes in the search tree first.
+    moves = util.Stack()
+    frontier = util.Stack()
+    path = util.Stack()
+    visited = []
 
-    Your search algorithm needs to return a list of actions that reaches the
-    goal. Make sure to implement a graph search algorithm.
+    curr_state = problem.getStartState()
+    curr_succ = problem.getSuccessors(curr_state)
+    exp = {
+        curr_state:curr_succ
+    }
+    appendSuccessors(frontier,curr_succ)
+    while(not frontier.isEmpty() or curr_state not in visited):
+        curr_goal = problem.isGoalState(curr_state)
 
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
+        if curr_goal:
+            return moves.list
 
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+        if curr_state in exp:
+            curr_succ = exp[curr_state]
+        else:
+            curr_succ =  problem.getSuccessors(curr_state)
+            exp[curr_state] = curr_succ
+
+        curr_succ = [succ for succ in curr_succ if succ[0] not in visited]
+        
+        if len(curr_succ) == 0:
+            if curr_state not in visited:
+                visited.append(curr_state)
+            moves.pop()
+            curr_state = path.pop()
+        else:
+            path.push(curr_state)
+            visited.append(curr_state)
+            appendSuccessors(frontier,curr_succ)
+            node = frontier.pop()
+            moves.push(node[1])
+            curr_state = node[0]
+    return []
 
 
 def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.Queue()
+    visited = []
+    curr_state = problem.getStartState()
+    frontier.push((curr_state, []))
+    while(not frontier.isEmpty()):
+        node = frontier.pop()
+        curr_state = node[0]
+        moves = node[1]
+
+        if curr_state in visited:
+            continue
+
+        visited.append(curr_state)
+
+        if problem.isGoalState(curr_state):
+            return moves
+
+        for successor in problem.getSuccessors(curr_state):
+            if successor[0] not in visited: 
+                frontier.push((successor[0], moves+[successor[1]]))
+    return []
 
 
 def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.PriorityQueue()
+    visited = []
+    curr_state = problem.getStartState()
+    frontier.push((curr_state, [], 0),0)
+    while(not frontier.isEmpty()):
+        node = frontier.pop()
+        curr_state = node[0]
+        moves = node[1]
+        cost = node[2]
+
+        if curr_state in visited:
+            continue
+
+        visited.append(curr_state)
+
+        if problem.isGoalState(curr_state):
+            return moves
+        for successor in problem.getSuccessors(curr_state):
+            if successor[0] not in visited:
+                new_cost = cost+successor[2]
+                frontier.push((successor[0], moves+[successor[1]], new_cost), new_cost)
+    return []
 
 
 def nullHeuristic(state, problem=None):
@@ -162,3 +223,20 @@ dfs = depthFirstSearch
 ucs = uniformCostSearch
 gs = greedySearch
 astar = aStarSearch
+
+def appendSuccessors(frontier, successors):
+    for successor in successors:
+        if successor not in frontier.list:
+            frontier.push(successor)
+
+def appendEarlyGoal(frontier, successors, problem, moves):
+    for successor in successors:
+        if successor not in frontier.list:
+            if problem.isGoalState(successor[0]):
+                print(successor[0])
+                moves.push(successor[1])
+                print(moves.list)
+                return True
+            frontier.push(successor)
+    return False
+# def 

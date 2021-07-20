@@ -173,15 +173,52 @@ def nullHeuristic(state, problem=None):
 
 
 def greedySearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.PriorityQueue()
+    visited = []
+    curr_state = problem.getStartState()
+    frontier.push((curr_state, []), heuristic(curr_state,problem))
+    while(not frontier.isEmpty()):
+        node = frontier.pop()
+        curr_state = node[0]
+        moves = node[1]
+
+        if curr_state in visited:
+            continue
+
+        visited.append(curr_state)
+
+        if problem.isGoalState(curr_state):
+            return moves
+        for successor in problem.getSuccessors(curr_state):
+            if successor[0] not in visited:
+                new_cost = heuristic(successor[0], problem)
+                frontier.push((successor[0], moves+[successor[1]]), new_cost)
+    return []
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.PriorityQueue()
+    visited = []
+    curr_state = problem.getStartState()
+    frontier.push((curr_state, [], 0), heuristic(curr_state,problem))
+    while(not frontier.isEmpty()):
+        node = frontier.pop()
+        curr_state = node[0]
+        moves = node[1]
+        cost = node[2]
+
+        if curr_state in visited:
+            continue
+
+        visited.append(curr_state)
+
+        if problem.isGoalState(curr_state):
+            return moves
+        for successor in problem.getSuccessors(curr_state):
+            if successor[0] not in visited:
+                new_cost = cost+successor[2]
+                frontier.push((successor[0], moves+[successor[1]], cost+successor[2]), new_cost+heuristic(successor[0], problem))
+    return []
 
 
 def foodHeuristic(state, problem):
@@ -213,8 +250,12 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    goals = foodGrid.asList()
+    sum = 0
+
+    for goal in goals:
+        sum += abs(position[0] - goal[0]) + abs(position[1] - goal[1])
+    return sum
 
 
 # Abbreviations

@@ -290,3 +290,32 @@ def aux_bfs(position, walls, goal):
             if successor not in visited: 
                 frontier.push((successor, cost+1,path+[curr_state]))
     return 0
+
+
+def aux_travel(position, walls, goals, cutoff):
+    frontier = util.Queue()
+    curr_state = position
+    reached = []
+    frontier.push((curr_state, 0,[],[]))
+    while(not frontier.isEmpty()):
+        node = frontier.pop()
+        curr_state = node[0]
+        cost = node[1]
+        path = node[2]
+        reached = node[3]
+  
+        if path.count(curr_state) >= 4:
+            continue
+
+        if curr_state in goals:
+            if curr_state not in reached:
+                reached = reached + [curr_state]
+                
+                if len(goals) == len(reached):
+                    print(cost,path,reached)
+                    return cost
+
+        for successor in neighbours(curr_state,walls):
+            if path.count(successor) < 4 and cost < cutoff:
+                frontier.push((successor, cost+1,path+[curr_state], reached+[]))
+    return 0

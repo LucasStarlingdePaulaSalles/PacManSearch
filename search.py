@@ -220,7 +220,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 frontier.push((successor[0], moves+[successor[1]], cost+successor[2]), new_cost+heuristic(successor[0], problem))
     return []
 
-
 def foodHeuristic(state, problem):
     """
     Your heuristic for the FoodSearchProblem goes here.
@@ -251,29 +250,23 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     goals = foodGrid.asList()
-    sum = 0
-    dists = []
-    max = 0
-
-    if len(goals) == 0:
-        return sum
-
-    for goal in goals:
-        dist = abs(position[0] - goal[0]) + abs(position[1] - goal[1])
-        if dist > max:
-            max = dist
-        dists.append(dist)
-        
-    sorted_indexes = sorted(range(len(dists)), key=lambda k: dists[k])
+    sum_ = 0
 
     point = position
-    for index in sorted_indexes:
-        c_dist = abs(point[0] - goals[index][0]) + abs(point[1] - goals[index][1])
-        # if c_dist > max:
-        #     c_dist = abs(position[0] - goals[index][0]) + abs(position[1] - goals[index][1])
-        sum+=c_dist
-        point = goals[index]
-    return sum
+    while len(goals) > 0:
+        min_ = 10000000
+
+        for goal in goals:
+            # dist = aux_bfs(point,problem.walls,goal)
+            dist = abs(point[0] - goal[0]) + abs(point[1] - goal[1])
+            if dist < min_:
+                min_ = dist
+                next_ = goal
+        sum_ += min_
+        goals.remove(next_)
+        point = next_
+
+    return sum_
 
 
 # Abbreviations
@@ -298,4 +291,39 @@ def appendEarlyGoal(frontier, successors, problem, moves):
                 return True
             frontier.push(successor)
     return False
-# def 
+
+def neighbours(position, walls):
+    x = position[0]
+    y = position[1]
+    options = [(x+1,y),(x-1,y),(x,y+1),(x,y-1)]
+    neighbours = []
+    
+    for option in options:
+        if not walls[option[0]][option[1]]:
+            neighbours.append(option)
+    return neighbours
+
+def aux_bfs(position, walls, goal):
+    frontier = util.Queue()
+    visited = []
+    curr_state = position
+    frontier.push((curr_state, 0,[]))
+    while(not frontier.isEmpty()):
+        node = frontier.pop()
+        curr_state = node[0]
+        cost = node[1]
+        path = node[2]
+
+        if curr_state in visited:
+            continue
+
+        visited.append(curr_state)
+
+        if curr_state == goal:
+
+            return cost
+
+        for successor in neighbours(curr_state,walls):
+            if successor not in visited: 
+                frontier.push((successor, cost+1,path+[curr_state]))
+    return 0

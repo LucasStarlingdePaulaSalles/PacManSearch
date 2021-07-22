@@ -252,9 +252,27 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     goals = foodGrid.asList()
     sum = 0
+    dists = []
+    max = 0
+
+    if len(goals) == 0:
+        return sum
 
     for goal in goals:
-        sum += abs(position[0] - goal[0]) + abs(position[1] - goal[1])
+        dist = abs(position[0] - goal[0]) + abs(position[1] - goal[1])
+        if dist > max:
+            max = dist
+        dists.append(dist)
+        
+    sorted_indexes = sorted(range(len(dists)), key=lambda k: dists[k])
+
+    point = position
+    for index in sorted_indexes:
+        c_dist = abs(point[0] - goals[index][0]) + abs(point[1] - goals[index][1])
+        # if c_dist > max:
+        #     c_dist = abs(position[0] - goals[index][0]) + abs(position[1] - goals[index][1])
+        sum+=c_dist
+        point = goals[index]
     return sum
 
 

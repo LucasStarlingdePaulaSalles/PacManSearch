@@ -200,7 +200,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     frontier = util.PriorityQueue()
     visited = []
     curr_state = problem.getStartState()
-    frontier.push((curr_state, [], 0), heuristic(curr_state,problem))
+    frontier.update((curr_state, [], 0), heuristic(curr_state,problem))
     while(not frontier.isEmpty()):
         node = frontier.pop()
         curr_state = node[0]
@@ -217,7 +217,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         for successor in problem.getSuccessors(curr_state):
             if successor[0] not in visited:
                 new_cost = cost+successor[2]
-                frontier.push((successor[0], moves+[successor[1]], cost+successor[2]), new_cost+heuristic(successor[0], problem))
+                frontier.update((successor[0], moves+[successor[1]], cost+successor[2]), new_cost+heuristic(successor[0], problem))
     return []
 
 def foodHeuristic(state, problem):

@@ -244,17 +244,6 @@ def appendSuccessors(frontier, successors):
         if successor not in frontier.list:
             frontier.push(successor)
 
-def appendEarlyGoal(frontier, successors, problem, moves):
-    for successor in successors:
-        if successor not in frontier.list:
-            if problem.isGoalState(successor[0]):
-                print(successor[0])
-                moves.push(successor[1])
-                print(moves.list)
-                return True
-            frontier.push(successor)
-    return False
-
 def neighbours(position, walls):
     x = position[0]
     y = position[1]

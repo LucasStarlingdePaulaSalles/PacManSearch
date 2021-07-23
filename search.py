@@ -223,13 +223,47 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 def foodHeuristic(state, problem):
     position, food_grid = state
     goals = food_grid.asList()
-    max_ = 0
+    sum_ = 0
+    # goals=[(1,3),(7,3),(13,3)]
 
-    for goal in goals:
-        dist = aux_bfs(position,problem.walls,goal)
-        if dist > max_: max_ = dist
+    while len(goals) > 0:
+        point = position
+        curr_goals = goals.copy()
+        while len(curr_goals) > 0:
+            # print(point)
+            min_relative_dist = 100000
+            for goal in curr_goals:
+                dist = aux_bfs(point,problem.walls,goal)
+                if dist < min_relative_dist:
+                    next_ = goal
+                    min_relative_dist = dist
+            absolute_dist = aux_bfs(position, problem.walls, next_)
+            if min_relative_dist <= absolute_dist:
+                print(f'{point}->{next_} | {min_relative_dist} ')
+                sum_ += min_relative_dist
+                goals.remove(next_)
+                curr_goals.remove(next_)
+                last_ = point
+                point = next_
+            else:
+                last_supporting_dist = aux_bfs(last_, problem.walls, next_)
+                if last_supporting_dist <= absolute_dist:
+                    print(f'{last_}->{next_} | {last_supporting_dist} ')
+                    sum_ += last_supporting_dist
+                    goals.remove(next_)
+                    curr_goals.remove(next_)
+                    point = next_
+                else:
+                    print(f'{point}x>{next_} | {min_relative_dist} > {absolute_dist} ')
+                    curr_goals = []
+    # print(sum_)
+    # input()            
 
-    return max_
+    # for goal in goals:
+    #     dist = aux_bfs(position,problem.walls,goal)
+    #     if dist > sum_: sum_ = dist
+
+    return sum_
 
 
 # Abbreviations

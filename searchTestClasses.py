@@ -504,7 +504,13 @@ class HeuristicTest(testClasses.TestCase):
         for succ, action, stepCost in problem.getSuccessors(state):
             h1 = heuristic(succ, problem)
             if h1 < 0: return False, 'Heuristic failed H >= 0 test'
-            if h0 - h1 > stepCost: return False, 'Heuristic failed consistency test'
+            if h0 - h1 > stepCost:
+                print(state[0],state[1].asList(), h0)
+                print(succ[0],succ[1].asList(), h1)
+                print(f'{h0}-{h1} > {stepCost}')
+                print(state[0],state[1].asList())
+                print(problem.walls)
+                return False, 'Heuristic failed consistency test'
 
         return True, ''
 

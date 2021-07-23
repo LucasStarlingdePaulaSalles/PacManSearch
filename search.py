@@ -143,7 +143,7 @@ def uniformCostSearch(problem):
     frontier = util.PriorityQueue()
     visited = []
     curr_state = problem.getStartState()
-    frontier.push((curr_state, [], 0),0)
+    frontier.update((curr_state, [], 0),0)
     while(not frontier.isEmpty()):
         node = frontier.pop()
         curr_state = node[0]
@@ -160,7 +160,7 @@ def uniformCostSearch(problem):
         for successor in problem.getSuccessors(curr_state):
             if successor[0] not in visited:
                 new_cost = cost+successor[2]
-                frontier.push((successor[0], moves+[successor[1]], new_cost), new_cost)
+                frontier.update((successor[0], moves+[successor[1]], new_cost), new_cost)
     return []
 
 
@@ -176,7 +176,7 @@ def greedySearch(problem, heuristic=nullHeuristic):
     frontier = util.PriorityQueue()
     visited = []
     curr_state = problem.getStartState()
-    frontier.push((curr_state, []), heuristic(curr_state,problem))
+    frontier.update((curr_state, []), heuristic(curr_state,problem))
     while(not frontier.isEmpty()):
         node = frontier.pop()
         curr_state = node[0]
@@ -192,7 +192,7 @@ def greedySearch(problem, heuristic=nullHeuristic):
         for successor in problem.getSuccessors(curr_state):
             if successor[0] not in visited:
                 new_cost = heuristic(successor[0], problem)
-                frontier.push((successor[0], moves+[successor[1]]), new_cost)
+                frontier.update((successor[0], moves+[successor[1]]), new_cost)
     return []
 
 
